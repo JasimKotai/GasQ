@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1013856405665",
+    "project_id": "gasq-413009",
+    "storage_bucket": "gasq-413009.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013856405665:android:59b771dea9972af18048e0",
+        "android_client_info": {
+          "package_name": "com.gasq"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZUQN7yFLca1OE7JIJOVsvxgiJWB_2pPk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

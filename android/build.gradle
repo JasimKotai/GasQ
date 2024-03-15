@@ -1,0 +1,45 @@
+buildscript {
+    ext {
+        googlePlayServicesVersion = "+" // default: "+"
+        firebaseMessagingVersion = "21.1.0" // default: "21.1.0"
+
+        buildToolsVersion = "34.0.0"
+        minSdkVersion = 21
+        compileSdkVersion = 34
+        targetSdkVersion = 34
+        ndkVersion = "25.1.8937393"
+        kotlinVersion = "1.8.0"
+
+        appCompatVersion 	= "1.4.2" 
+        googlePlayServicesLocationVersion = "21.0.1"
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        // firebase step 1
+        classpath "com.google.gms:google-services:4.4.0"
+    }
+}
+
+apply plugin: "com.facebook.react.rootproject"
+
+// react-native-background-fetch step 1
+// react-native-background-geolocation step 1
+allprojects {
+    repositories {
+            // Required for react-native-background-geolocation
+       maven {
+           url("${project(':react-native-background-geolocation').projectDir}/libs")
+       }
+       maven { url 'https://developer.huawei.com/repo/' }
+       maven {
+           url("${project(':react-native-background-fetch').projectDir}/libs")
+       }
+
+    }
+}
