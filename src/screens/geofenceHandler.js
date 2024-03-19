@@ -24,7 +24,7 @@ export const handleGeofencing = (gasStations, userData) => {
       };
 
       const response = await axios.request(config);
-      console.log('response app => ', response.data);
+      // console.log('response app => ', response.data);
     } catch (error) {
       console.log('in out update error => ', error);
     }
@@ -101,10 +101,10 @@ export const handleGeofencing = (gasStations, userData) => {
       // forceReloadOnBoot: true,
     },
     state => {
-      // if (!state.enabled) {
-      // BackgroundGeolocation.startGeofences(); // ye pehle se the
-      BackgroundGeolocation.start();
-      // }
+      if (!state.enabled) {
+        // BackgroundGeolocation.startGeofences(); // ye pehle se the
+        BackgroundGeolocation.start();
+      }
     },
   );
 };

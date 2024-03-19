@@ -128,10 +128,9 @@ const DrawerNav = () => {
     }
   };
   // const [user, setUser] = useState();
-  const [user, setUser] = useState(useSelector(state => state.gasStation.user));
-  // console.log('user drawer =>', user);
-  // const userName = useSelector(state => state.gasStation.user);
-  console.log('userName -==> ', user);
+  // const [user, setUser] = useState(useSelector(state => state.gasStation.user));
+  const user = useSelector(state => state.gasStation.user);
+  // console.log('userName -==> ', user);
   // useFocusEffect(
   //   React.useCallback(() => {
   //     console.log('----');

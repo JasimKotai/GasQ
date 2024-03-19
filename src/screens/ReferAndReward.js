@@ -12,28 +12,34 @@ import {
 import React from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import BackgroundGeolocation from 'react-native-background-geolocation';
+import Toast from 'react-native-toast-message';
 
 const Width = Dimensions.get('window').width;
 const Height = Dimensions.get('window').height;
 
 const ReferAndReward = ({navigation}) => {
   BackgroundGeolocation.getGeofences().then(geofences => {
-    console.log('[getGeofences] ====> ', geofences);
+    // console.log(
+    //   '[getGeofences] ReferAndReward Screen Total geofence added ====> ',
+    //   geofences,
+    // );
   });
 
   const copyToClipboard = () => {
     Clipboard.setString('hello world');
   };
+
   const handleShare = async () => {
     try {
-      Alert.alert('what should be share?');
-      // await Share.share({
-      //   message: 'sharing text',
-      //   // You can also include other properties such as url:
-      //   url: 'https://example.com',
-      // });
+      const result = await Share.share({
+        message: 'Hello World',
+        // url: 'https://reactnative.dev/',
+        // title: 'React Native Documentation',
+      });
+      // Handle the result as needed
     } catch (error) {
-      console.error('Error sharing to WhatsApp:', error.message);
+      Toast.show({type: 'error', text1: 'error'});
+      console.error('Error sharing to :', error.message);
     }
   };
 
@@ -114,7 +120,9 @@ const ReferAndReward = ({navigation}) => {
 
           <TouchableOpacity
             onPress={() => {
-              handleShare();
+              const instaSmall = 'instagram';
+              const instaCapital = 'INSTAGRAM';
+              handleShare(instaSmall, instaCapital);
             }}>
             <Image
               source={require('../assets/images/instagram.png')}

@@ -27,6 +27,7 @@
     "lottie-react-native": "^6.6.0",
     "react": "18.2.0",
     "react-native": "0.73.4",
+    "react-native-android-location-enabler": "^2.0.1",
     "react-native-background-fetch": "^4.2.2",
     "react-native-background-geolocation": "^4.15.0",
     "react-native-confirmation-code-field": "^7.3.2",

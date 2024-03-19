@@ -16,8 +16,6 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import {Callout, Circle, Marker} from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
-// import Geolocation from '@react-native-community/geolocation';
-// import Geolocation from 'react-native-geolocation-service';
 import PushNotification from 'react-native-push-notification';
 
 import BackgroundGeolocation from 'react-native-background-geolocation';
@@ -29,6 +27,9 @@ import Toast from 'react-native-toast-message';
 import {addGasStationList} from '../components/redux/gasStationSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {handleGeofencing} from './geofenceHandler';
+
+import {isLocationEnabled} from 'react-native-android-location-enabler';
+import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
 
 const Width = Dimensions.get('window').width;
 const Height = Dimensions.get('window').height;
@@ -42,40 +43,6 @@ const HomeScreen = ({navigation}) => {
   const [loader, setLoader] = useState(false);
 
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   const requestLocationPermission = async () => {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //       );
-  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //         console.log('Location permission granted');
-  //         const locationUpdate = Geolocation.getCurrentPosition(
-  //           position => {
-  //             console.log('True position => ', position);
-  //             const {latitude, longitude} = position.coords;
-  //             setLocation({latitude, longitude});
-  //           },
-  //           error => {
-  //             // See error code charts below.
-  //             console.warn('false => ', error.code, error.message);
-  //           },
-  //           {enableHighAccuracy: true, timeout: 15000},
-  //         );
-  //       } else {
-  //         console.log(
-  //           'Location permission denied. Geofence functionality will be disabled.',
-  //         );
-  //       }
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   };
-  //   requestLocationPermission();
-  //   const locationUpdateInterval = setInterval(requestLocationPermission, 5000);
-  //   return () => clearInterval(locationUpdateInterval);
-  // }, []);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -130,11 +97,31 @@ const HomeScreen = ({navigation}) => {
       }
     };
 
-    requestLocationPermission();
+    async function handleCheckPressed() {
+      if (Platform.OS === 'android') {
+        try {
+          const enableResult = await promptForEnableLocationIfNeeded();
+          console.log('enableResult', enableResult);
+          if (enableResult == 'enabled' || enableResult == 'already-enabled') {
+            requestLocationPermission();
+          }
+        } catch (error) {
+          console.log('Error enabling location:', error);
+          Toast.show({
+            type: 'error',
+            text1: 'please enable location services',
+            timeout: 5000,
+          });
+        }
+      }
+    }
+
+    handleCheckPressed();
+    // requestLocationPermission();
     getStationList();
-    setTimeout(() => {
-      requestLocationPermission;
-    }, 3000);
+    // setTimeout(() => {
+    //   requestLocationPermission;
+    // }, 3000);
   }, []);
 
   const openAppSettings = () => {
@@ -144,7 +131,7 @@ const HomeScreen = ({navigation}) => {
   const getStationList = async () => {
     try {
       const response = await axios.get(`${BASE_URL_LOCAL}/gas-stations-list`);
-      console.log('fetch StationList -------', response.data);
+      // console.log('fetch StationList -------', response.data);
       if (response.data) {
         setGasStation(response.data.data);
         const jsonValue = JSON.stringify(response.data.data);
@@ -194,113 +181,8 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
-  // redux
   const gas = useSelector(state => state.gasStation.gasStation);
-  // console.log('app.js gasStation ===> :', gas);
-  // console.log('checkrender --------------------------------');
 
-  // useEffect(() => {
-  //   BackgroundGeolocation.onGeofence(geofence => {
-  //     console.log(
-  //       '[geofence] ',
-  //       geofence.identifier,
-  //       geofence.action,
-  //       geofence.extras.gasStation_id,
-  //     );
-
-  //     if (geofence.action == 'ENTER') {
-  //       handleInOut('IN', geofence.extras.gasStation_id);
-  //       PushNotification.localNotification({
-  //         channelId: 'test-channel',
-  //         title: geofence.identifier.slice(0, -1),
-  //         message: `you have reached ${geofence.identifier.slice(0, -1)}`,
-  //         invokeApp: true,
-  //         // color: 'white',
-  //       });
-  //       // BackgroundGeolocation.start(); // ye tha
-  //       // BackgroundGeolocation.startGeofences();
-  //     } else if (geofence.action == 'EXIT') {
-  //       handleInOut('OUT', geofence.extras.gasStation_id);
-  //       PushNotification.localNotification({
-  //         channelId: 'test-channel',
-  //         title: geofence.identifier.slice(0, -1),
-  //         message: `you are out of ${geofence.identifier.slice(0, -1)}`,
-  //         invokeApp: true,
-  //         // color: 'white',
-  //       });
-  //       BackgroundGeolocation.startGeofences();
-  //     }
-  //   });
-
-  //   const addGeofences = async () => {
-  //     try {
-  //       if (gas) {
-  //         const geofences = gas.map(item => ({
-  //           identifier: `${item.gas_station_name} ${item.id}`,
-  //           radius: 200,
-  //           latitude: parseFloat(item.latitude),
-  //           longitude: parseFloat(item.longitude),
-  //           notifyOnEntry: true,
-  //           notifyOnExit: true,
-  //           extras: {
-  //             gasStation_id: item.id,
-  //           },
-  //         }));
-  //         await BackgroundGeolocation.addGeofences(geofences);
-  //         // console.log('geofences ------->', geofences);
-  //         console.log('Geofences added successfully');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error adding geofences:', error);
-  //     }
-  //   };
-  //   addGeofences();
-
-  //   BackgroundGeolocation.ready(
-  //     {
-  //       desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-  //       distanceFilter: 10,
-  //       // url: 'http://your.server.com/locations',
-  //       // autoSync: true,
-  //       stopOnTerminate: false,
-  //       startOnBoot: true,
-  //       enableHeadless: true,
-  //       // geofenceModeHighAccuracy: true,
-  //       // forceReloadOnBoot: true,
-  //     },
-  //     state => {
-  //       // if (!state.enabled) {
-  //       // BackgroundGeolocation.startGeofences(); // ye pehle se the
-  //       BackgroundGeolocation.start();
-  //       // }
-  //     },
-  //   );
-  // }, []);
-
-  const handleInOut = async (status, id) => {
-    try {
-      let data = JSON.stringify({
-        gas_station_id: id,
-        vehicleNumber: userData?.User_details.vehicleLicense,
-        status: status,
-      });
-
-      let config = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: `${BASE_URL_LOCAL}/vehicle-in-out`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: data,
-      };
-
-      const response = await axios.request(config);
-      // console.log('response app => ', response.data);
-    } catch (error) {
-      console.log('in out update error => ', error);
-    }
-  };
 
   return (
     <>

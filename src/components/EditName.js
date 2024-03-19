@@ -14,12 +14,13 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import {BASE_URL_LOCAL} from '../config/Api';
 import {addUserData} from './redux/gasStationSlice';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Width = Dimensions.get('window').width;
 const Height = Dimensions.get('window').height;
 const EditName = ({navigation, route}) => {
+
   const {user} = route.params;
   // console.log(' EditName =>', user);
   const [newName, setNewName] = useState('');
